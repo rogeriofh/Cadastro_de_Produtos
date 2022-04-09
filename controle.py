@@ -51,6 +51,7 @@ def visu_segunda_tela():
     for i in range(0, len(dados_lidos)):
         for j in range(0, 5):
              segunda_tela.tableWidget.setItem(i,j,QtWidgets.QTableWidgetItem(str(dados_lidos[i][j]))) 
+             
 
 apl = QtWidgets.QApplication([])
 formulario = uic.loadUi("cadastroprodutos.ui")
