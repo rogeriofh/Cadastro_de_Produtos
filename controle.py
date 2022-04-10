@@ -11,13 +11,13 @@ banco = mysql.connector.connect(
 #função pra gerar o aquivo pdf
 def excluir_dados():
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
-    segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha 
+    segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha na segunda tela
     
     cursor = banco.cursor()
-    cursor.execute('SELECT id FROM produtos')
+    cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
     dados_lidos = cursor.fetchall()
-    valor_id = dados_lidos[linha][0]
-    cursor.execute(comando_SQL)
+    valor_id = dados_lidos[linha][0]#igualou o id do produto com o numero de identificação da linha 
+    cursor.execute('DELETE FROM produtos WHERE id='+str (valor_id))#deletou no banco de daods 
 
 def gerar_pdf():
     cursor = banco.cursor()
