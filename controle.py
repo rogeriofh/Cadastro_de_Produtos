@@ -2,6 +2,8 @@ from PyQt6 import  uic, QtWidgets #importação e exibição da tabela feita no 
 import mysql.connector #comunicação com MySQL
 from reportlab.pdfgen import canvas
 #acesso ao banco de dados especifico. 
+numero_id = 0
+
 banco = mysql.connector.connect(
     host="localhost",
     user="root",
@@ -9,6 +11,41 @@ banco = mysql.connector.connect(
     database="cadastro_produtos"
 )
 #função pra gerar o aquivo pdf
+
+def tela_editar():
+    global numero_id
+    linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
+    
+    cursor = banco.cursor()
+    cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
+    dados_lidos = cursor.fetchall()
+    valor_id = dados_lidos[linha][0] 
+    cursor.execute('SELECT * FROM produtos WHERE id='+str (valor_id))
+    produto = cursor.fetchall()
+    numero_id = valor_id
+
+    terceira_tela.lineEdit.setText(str(produto[0][0]))
+    terceira_tela.lineEdit_2.setText(str(produto[0][1]))
+    terceira_tela.lineEdit_3.setText(str(produto[0][2]))
+    terceira_tela.lineEdit_4.setText(str(produto[0][3]))
+    terceira_tela.lineEdit_5.setText(str(produto[0][4]))
+    terceira_tela.show()
+
+def salvar_editados():
+    global numero_id
+    codigo = terceira_tela.lineEdit_2.text()
+    descricao = terceira_tela.lineEdit_3.text()
+    preco = terceira_tela.lineEdit_4.text()
+    categoria = terceira_tela.lineEdit_5.text()
+    #atualizar no banco de dados
+    cursor = banco.cursor()
+    cursor.execute("UPDATE produtos SET codigo = '{}', descricao = '{}', preco = '{}', categoria ='{}' WHERE id = {}".format(codigo,descricao,preco,categoria,numero_id))
+    banco.commit()
+    terceira_tela.close()
+    segunda_tela.close()
+    visu_segunda_tela()
+
+
 def excluir_dados():
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
     segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha na segunda tela
@@ -94,10 +131,13 @@ def visu_segunda_tela():
 apl = QtWidgets.QApplication([]) #cria o aplicativo 
 formulario = uic.loadUi("cadastroprodutos.ui")#lê e carrega arquivo 'ui' criado pelo Qt Designer
 segunda_tela = uic.loadUi("visualizar.ui") #lê e carrega o aquivo 'ui' da segunda tela
+terceira_tela = uic.loadUi("editar_produto.ui")
 formulario.pushButton.clicked.connect(funcao_principal) #chama a funcção quando aperta o botão 'enviar'.
 formulario.pushButton_2tela.clicked.connect(visu_segunda_tela) #chama a função quando aperta o botão 'visualizar'
 segunda_tela.pushButton.clicked.connect(gerar_pdf)#chama a funcção que gera o pdf
 segunda_tela.pushButton_2.clicked.connect(excluir_dados)
+segunda_tela.pushButton_3.clicked.connect(tela_editar)
+terceira_tela.pushButton.clicked.connect(salvar_editados)
 
 formulario.show() #mostra a primeira tela com o arquivo "ui".
 apl.exec() #executa o aplicativo
