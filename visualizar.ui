@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>554</width>
-    <height>589</height>
+    <height>587</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,10 +20,10 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>-10</y>
+      <x>160</x>
+      <y>0</y>
       <width>271</width>
-      <height>51</height>
+      <height>41</height>
      </rect>
     </property>
     <property name="font">
@@ -38,7 +38,7 @@
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>50</y>
       <width>541</width>
       <height>451</height>
@@ -143,7 +143,7 @@ color: rgb(255, 255, 255);</string>
      <rect>
       <x>40</x>
       <y>522</y>
-      <width>61</width>
+      <width>71</width>
       <height>21</height>
      </rect>
     </property>
@@ -161,7 +161,7 @@ color: rgb(255, 255, 255);</string>
 background-color: rgb(255, 255, 127);</string>
     </property>
     <property name="text">
-     <string>excluir</string>
+     <string>Excluir Item</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_3">
@@ -186,9 +186,33 @@ background-color: rgb(255, 255, 127);</string>
      <string notr="true">background-color: rgb(255, 255, 127);</string>
     </property>
     <property name="text">
-     <string>editar</string>
+     <string>Editar</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_4">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>10</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(0, 0, 0);
+border-bottom-color: rgb(255, 0, 0);
+color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="text">
+     <string>Excluir Tudo</string>
+    </property>
+   </widget>
+   <zorder>tableWidget</zorder>
+   <zorder>label</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>pushButton_3</zorder>
+   <zorder>pushButton_4</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

@@ -1,5 +1,6 @@
 from PyQt6 import  uic, QtWidgets #importação e exibição da tabela feita no Qt Designer
 import mysql.connector #comunicação com MySQL
+from PyQt6.QtWidgets import QMessageBox
 from reportlab.pdfgen import canvas
 
 #variavel global iniciada em 0 
@@ -84,16 +85,32 @@ def gerar_pdf():
 
     pdf.save()
 
-def excluir_dados():
+def excluir_item():
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
     segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha na segunda tela
-    
+   
     cursor = banco.cursor()
     cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
     dados_lidos = cursor.fetchall()
     valor_id = dados_lidos[linha][0]#igualou o id do produto com o numero de identificação da linha 
-    cursor.execute('DELETE FROM produtos WHERE id='+str (valor_id))#deletou no banco de daods 
+    cursor.execute('DELETE FROM produtos WHERE id='+str (valor_id))#deletou no banco de daods
 
+def tela_excluir_tudo():
+    tela_excluir.show()
+
+def excluir_tudo_sim():
+    cursor = banco.cursor()
+    cursor.execute('DELETE FROM produtos')
+    tela_excluir.close()
+    QMessageBox.about(tela_excluir, "Pronto!", "Itens excluidos com sucesso!")
+    visu_segunda_tela()
+    
+
+def excluir_tudo_nao():
+    tela_excluir.close()
+    visu_segunda_tela()
+
+    
 def tela_editar():
     global numero_id
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
@@ -133,14 +150,18 @@ apl = QtWidgets.QApplication([]) #cria o aplicativo
 formulario = uic.loadUi("cadastroprodutos.ui")#lê e carrega arquivo 'ui' criado pelo Qt Designer
 segunda_tela = uic.loadUi("visualizar.ui") #lê e carrega o aquivo 'ui' da segunda tela
 terceira_tela = uic.loadUi("editar_produto.ui")
+tela_excluir = uic.loadUi("excluir_tudo.ui")
 
 #botões
 formulario.pushButton.clicked.connect(funcao_principal) #chama a funcção quando aperta o botão 'enviar'.
 formulario.pushButton_2tela.clicked.connect(visu_segunda_tela) #chama a função quando aperta o botão 'visualizar'
 segunda_tela.pushButton.clicked.connect(gerar_pdf)#chama a funcção que gera o pdf
-segunda_tela.pushButton_2.clicked.connect(excluir_dados)
+segunda_tela.pushButton_2.clicked.connect(excluir_item)
 segunda_tela.pushButton_3.clicked.connect(tela_editar)
 terceira_tela.pushButton.clicked.connect(salvar_editados)
+segunda_tela.pushButton_4.clicked.connect(tela_excluir_tudo)
+tela_excluir.pushButton.clicked.connect(excluir_tudo_sim)
+tela_excluir.pushButton_2.clicked.connect(excluir_tudo_nao)
 
 formulario.show() #mostra a primeira tela com o arquivo "ui".
 apl.exec() #executa o aplicativo
