@@ -1,5 +1,7 @@
+from ast import Str
 from ctypes.wintypes import INT
 from msilib.schema import RadioButton
+from MySQLdb import STRING
 from PyQt6 import  uic, QtWidgets #importação e exibição da tabela feita no Qt Designer
 import mysql.connector #comunicação com MySQL
 from PyQt6.QtWidgets import QMessageBox
@@ -18,26 +20,26 @@ banco = mysql.connector.connect(
 
 #função para executar quando apertar o botão "enviar".
 def funcao_principal():
-    
+         
     linha1 = formulario.lineEdit.text()
     linha2 = formulario.lineEdit_2.text()   #variaveis que recebem os dados nas caixas de texto
     linha3 = formulario.lineEdit_3.text()   
     categoria = ''
-        
+            
     if formulario.radioButton.isChecked():
         categoria = 'informática'
     elif formulario.radioButton_2.isChecked():
         categoria = 'Alimentos'
     else:
         categoria = 'Eletrônicos'
-            
-            #Para salvar dados no banco de dados selecionado(Criei uma variavel pra executar o codigo sql "comando_SQL")
+                
+    #Para salvar dados no banco de dados selecionado(Criei uma variavel pra executar o codigo sql "comando_SQL")
     cursor  =  banco.cursor() #serve para comunicar com o banco de dados (sempre fazer)
     comando_SQL  =  "INSERT INTO produtos (codigo, descricao, preco, categoria) VALUE (%s,%s,%s,%s)" 
     dados  = (str(linha1), str(linha2), str(linha3), categoria)
     cursor.execute(comando_SQL, dados) #executa os comandos (colunas, valor)
     banco.commit()#salva no banco
-            #limpa as LineEdit após apertar o botão enviar(ainda dentro da função)
+    #limpa as LineEdit após apertar o botão enviar(ainda dentro da função)
     formulario.lineEdit.setText('')
     formulario.lineEdit_2.setText('')
     formulario.lineEdit_3.setText('')
