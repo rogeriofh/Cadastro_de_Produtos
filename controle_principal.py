@@ -113,12 +113,10 @@ def excluir_tudo_sim():
     QMessageBox.about(tela_excluir, "Pronto!", "Itens excluidos com sucesso!")
     visu_segunda_tela()
     
-
 def excluir_tudo_nao():
     tela_excluir.close()
     visu_segunda_tela()
 
-    
 def tela_editar():
     global numero_id
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
