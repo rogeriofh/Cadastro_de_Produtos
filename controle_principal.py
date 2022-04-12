@@ -1,3 +1,5 @@
+from ctypes.wintypes import INT
+from msilib.schema import RadioButton
 from PyQt6 import  uic, QtWidgets #importação e exibição da tabela feita no Qt Designer
 import mysql.connector #comunicação com MySQL
 from PyQt6.QtWidgets import QMessageBox
@@ -16,26 +18,26 @@ banco = mysql.connector.connect(
 
 #função para executar quando apertar o botão "enviar".
 def funcao_principal():
+    
     linha1 = formulario.lineEdit.text()
     linha2 = formulario.lineEdit_2.text()   #variaveis que recebem os dados nas caixas de texto
     linha3 = formulario.lineEdit_3.text()   
     categoria = ''
-   
-   #condicções para funcionar as opcoes de 'categoria' no formulario
+        
     if formulario.radioButton.isChecked():
         categoria = 'informática'
     elif formulario.radioButton_2.isChecked():
         categoria = 'Alimentos'
     else:
         categoria = 'Eletrônicos'
-    
-    #Para salvar dados no banco de dados selecionado(Criei uma variavel pra executar o codigo sql "comando_SQL")
+            
+            #Para salvar dados no banco de dados selecionado(Criei uma variavel pra executar o codigo sql "comando_SQL")
     cursor  =  banco.cursor() #serve para comunicar com o banco de dados (sempre fazer)
     comando_SQL  =  "INSERT INTO produtos (codigo, descricao, preco, categoria) VALUE (%s,%s,%s,%s)" 
     dados  = (str(linha1), str(linha2), str(linha3), categoria)
     cursor.execute(comando_SQL, dados) #executa os comandos (colunas, valor)
     banco.commit()#salva no banco
-    #limpa as LineEdit após apertar o botão enviar(ainda dentro da função)
+            #limpa as LineEdit após apertar o botão enviar(ainda dentro da função)
     formulario.lineEdit.setText('')
     formulario.lineEdit_2.setText('')
     formulario.lineEdit_3.setText('')
@@ -87,13 +89,16 @@ def gerar_pdf():
 
 def excluir_item():
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
-    segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha na segunda tela
-   
-    cursor = banco.cursor()
-    cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
-    dados_lidos = cursor.fetchall()
-    valor_id = dados_lidos[linha][0]#igualou o id do produto com o numero de identificação da linha 
-    cursor.execute('DELETE FROM produtos WHERE id='+str (valor_id))#deletou no banco de daods
+    if linha is not INT:
+        QMessageBox.about(tela_excluir, "Alerta!", "Nenhum item selecionado!")
+        visu_segunda_tela()
+    else:
+        segunda_tela.tableWidget.removeRow(linha)#metodo removeRow Exclui a linha na segunda tela
+        cursor = banco.cursor()
+        cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
+        dados_lidos = cursor.fetchall()
+        valor_id = dados_lidos[linha][0]#igualou o id do produto com o numero de identificação da linha 
+        cursor.execute('DELETE FROM produtos WHERE id='+str (valor_id))#deletou no banco de daods
 
 def tela_excluir_tudo():
     tela_excluir.show()
@@ -101,6 +106,7 @@ def tela_excluir_tudo():
 def excluir_tudo_sim():
     cursor = banco.cursor()
     cursor.execute('DELETE FROM produtos')
+    banco.commit()
     tela_excluir.close()
     QMessageBox.about(tela_excluir, "Pronto!", "Itens excluidos com sucesso!")
     visu_segunda_tela()
@@ -114,21 +120,24 @@ def excluir_tudo_nao():
 def tela_editar():
     global numero_id
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
-    
-    cursor = banco.cursor()
-    cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
-    dados_lidos = cursor.fetchall()
-    valor_id = dados_lidos[linha][0] 
-    cursor.execute('SELECT * FROM produtos WHERE id='+str (valor_id))
-    produto = cursor.fetchall()
-    numero_id = valor_id
+    if linha is not INT:
+        QMessageBox.about(tela_excluir, "Alerta!", "Nenhuma linha selecionada!")
+        visu_segunda_tela()
+    else:    
+        cursor = banco.cursor()
+        cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
+        dados_lidos = cursor.fetchall()
+        valor_id = dados_lidos[linha][0] 
+        cursor.execute('SELECT * FROM produtos WHERE id='+str (valor_id))
+        produto = cursor.fetchall()
+        numero_id = valor_id
 
-    terceira_tela.lineEdit.setText(str(produto[0][0]))
-    terceira_tela.lineEdit_2.setText(str(produto[0][1]))
-    terceira_tela.lineEdit_3.setText(str(produto[0][2]))
-    terceira_tela.lineEdit_4.setText(str(produto[0][3]))
-    terceira_tela.lineEdit_5.setText(str(produto[0][4]))
-    terceira_tela.show()
+        terceira_tela.lineEdit.setText(str(produto[0][0]))
+        terceira_tela.lineEdit_2.setText(str(produto[0][1]))
+        terceira_tela.lineEdit_3.setText(str(produto[0][2]))
+        terceira_tela.lineEdit_4.setText(str(produto[0][3]))
+        terceira_tela.lineEdit_5.setText(str(produto[0][4]))
+        terceira_tela.show()
 
 def salvar_editados():
 
@@ -145,7 +154,7 @@ def salvar_editados():
     segunda_tela.close()
     visu_segunda_tela()
 
-
+#leitura de arquivo ui do Qt designer
 apl = QtWidgets.QApplication([]) #cria o aplicativo 
 formulario = uic.loadUi("cadastroprodutos.ui")#lê e carrega arquivo 'ui' criado pelo Qt Designer
 segunda_tela = uic.loadUi("visualizar.ui") #lê e carrega o aquivo 'ui' da segunda tela
