@@ -120,24 +120,21 @@ def excluir_tudo_nao():
 def tela_editar():
     global numero_id
     linha = segunda_tela.tableWidget.currentRow()# metodo 'currentRow' diz qual é a linha a ser excluida
-    if linha is not INT:
-        QMessageBox.about(tela_excluir, "Alerta!", "Nenhuma linha selecionada!")
-        visu_segunda_tela()
-    else:    
-        cursor = banco.cursor()
-        cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
-        dados_lidos = cursor.fetchall()
-        valor_id = dados_lidos[linha][0] 
-        cursor.execute('SELECT * FROM produtos WHERE id='+str (valor_id))
-        produto = cursor.fetchall()
-        numero_id = valor_id
+     
+    cursor = banco.cursor()
+    cursor.execute('SELECT id FROM produtos')#pegou só a coluna id
+    dados_lidos = cursor.fetchall()
+    valor_id = dados_lidos[linha][0] 
+    cursor.execute('SELECT * FROM produtos WHERE id='+str (valor_id))
+    produto = cursor.fetchall()
+    numero_id = valor_id
 
-        terceira_tela.lineEdit.setText(str(produto[0][0]))
-        terceira_tela.lineEdit_2.setText(str(produto[0][1]))
-        terceira_tela.lineEdit_3.setText(str(produto[0][2]))
-        terceira_tela.lineEdit_4.setText(str(produto[0][3]))
-        terceira_tela.lineEdit_5.setText(str(produto[0][4]))
-        terceira_tela.show()
+    terceira_tela.lineEdit.setText(str(produto[0][0]))
+    terceira_tela.lineEdit_2.setText(str(produto[0][1]))
+    terceira_tela.lineEdit_3.setText(str(produto[0][2]))
+    terceira_tela.lineEdit_4.setText(str(produto[0][3]))
+    terceira_tela.lineEdit_5.setText(str(produto[0][4]))
+    terceira_tela.show()
 
 def salvar_editados():
 
